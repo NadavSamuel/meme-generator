@@ -8,7 +8,6 @@
 
 </head>
 <body onload="init()">
-    
     <header class="flex space-between">
         <div class="logo-cont flex align-center"><img src="/icons/logo.png" class="logo-img"></div>
         <div class="main-nav  flex ">
@@ -16,7 +15,7 @@
             <img src="icons/6.png" class="seperator">
             <div class="nav-herf flex align-center" onclick= "renderReadyMemes()"><a  href="#">Memes</a></div>
             <img src="icons/6.png" class="seperator">
-            <div class="nav-herf flex align-center"><a href="#personal-details" onclick="toggleMenu()">About</a>
+            <div class="nav-herf flex align-center"><a  href="#">About</a>
             </div>
             </div>
             <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
@@ -28,7 +27,7 @@
     <div class="imgs-container">
     </div>
 
-    <section id="personal-details" class="personal-details flex align-center justify-center ">
+    <section class="personal-details flex align-center justify-center ">
         <div class="about flex justify-content: space-evenly align-center">
             <img src="icons/10.jpg" class="profile-img">
             <div class="personal-info flex column">
@@ -37,10 +36,9 @@
                      dolores iusto vel enim, corrupti est molestias repellat. 
                     Suscipit aut consequuntur atque maiores deleniti, explicabo accusantium ab officiis.</p>
                     <div class="social-btns flex">
-                        <!-- <img src="icons/16.svg" class="social-btn"> -->
-                        <i class="fab fa-facebook-square fa-3x"></i>
-                        <i class="fab fa-linkedin fa-3x"></i>
-                        <i class="fab fa-github fa-3x"></i>
+                        <img src="icons/11.png" class="social-btn">
+                        <img src="icons/12.png" class="social-btn">
+                        <img src="icons/13.png" class="social-btn">
                     </div>
 
             </div>
@@ -62,5 +60,42 @@
     <script src="js/meme-service.js"></script>
     <script src="js/meme-control.js"></script>
 
-</body>
+<!-- Code injected by live-server -->
+<script type="text/javascript">
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script></body>
 </html>
