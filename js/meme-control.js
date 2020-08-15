@@ -261,12 +261,16 @@ function downloadCanvas(elLink) {
 function onSaveMeme() {
     const canvas = document.querySelector('#meme-canvas');
     let readyMemes = getReadyMemes();
-    readyMemes.push(canvas.toDataURL());
+    readyMemes.push(canvas.toDataURL('imgp/ng'));
     saveToStorage(KEY, readyMemes);
 }
 
 function toggleMenu() {
         document.body.classList.toggle('menu-open');
+}
+
+function toggleScreen(){
+                document.body.classList.remove('menu-open')
 }
 function openReadyMeme(meme) {
     document.body.classList.toggle('screen-toggle')

@@ -4,7 +4,7 @@
 /* fonts */
 @font-face{
     font-family: Montserrat;
-    src : url(/fonts/Montserrat-light.ttf);
+    src : url(../fonts/Montserrat-light.ttf);
 }
 /* Base */
 body {
