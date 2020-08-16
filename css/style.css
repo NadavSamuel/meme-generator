@@ -67,7 +67,7 @@ li>div:hover{
     /* justify-content: space-between; */
     
 }
-#gsearch{
+.gsearch{
     border: 0;
     border-bottom: 1px solid;
     margin-inline-start: 50px;
