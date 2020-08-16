@@ -4,7 +4,7 @@
 /* fonts */
 @font-face{
     font-family: Montserrat;
-    src : url(../fonts/Montserrat-light.ttf);
+    src : url(/fonts/Montserrat-light.ttf);
 }
 /* Base */
 body {
@@ -26,6 +26,7 @@ canvas {
 }
 img{
     width:100%;
+    max-width:500px
 }
 img:hover{
     cursor: pointer;
@@ -50,10 +51,40 @@ body.screen-toggle .screen{
     /* grid-template-rows: repeat(1,300px); */
 
 }
+ul{
+    list-style-type: none;
+}
+li{
+    float: left;
+}
+li>div:hover{
+    cursor: pointer;
+}
 /* imgs container */
+/* search bar */
+.search-bar{
+    height: 70px;
+    /* justify-content: space-between; */
+    
+}
+#gsearch{
+    border: 0;
+    border-bottom: 1px solid;
+    margin-inline-start: 50px;
+}
+.top-keywords{
+    display: none;
+    font-size:1.7rem;
+    width: 60%;
+    height: 40%;
+    justify-content: space-between;
+
+}
+.keyword{
+    margin-inline-start: 2.5rem;
+}
 .imgs-container{
     background-color: #e3e3e3;
-    margin-top:70px;
     padding-left: 50px; 
     padding-right: 50px;     
 }
@@ -252,6 +283,7 @@ header{
     text-align: center;
     flex-wrap:wrap;
     align-items: center;
+    justify-content: center;
 }
 .meme-text-input{
 min-width: 95%;
@@ -283,6 +315,8 @@ background-color: #ffffff;
 @media(max-width:710px){
     .imgs-container{
         padding: 0;
+        display: flex;
+        justify-content: center;
     }
     .generator-page{
     height: 100%;
@@ -364,6 +398,9 @@ background-color: #ffffff;
     min-width:300px;
     height: 320px;
 
+}
+.about > p {
+    width: 30ch;
 }
 .profile-img{
     height: 100%;

@@ -6,6 +6,7 @@ function init() {
     if (elBody.classList.contains('menu-open')) elBody.classList.remove('menu-open')
 }
 
+
 function renderImgs() {
     let elImgsCont = document.querySelector('.imgs-container');
     var imgs = getImgs();
@@ -13,20 +14,47 @@ function renderImgs() {
     let strHtml2 = imgs.map(function (img) {
         return `
         <a onclick="renderMemeGenerator(${img.id})">
-        <img class="template-${img.id}" id={${img.id}} src="${img.url}" alt="template-${img.id}
+        <img class="template-${img.id}" id=${img.id} src="${img.url}" alt="template-${img.id}
          onclick="renderMemeGenerator(this)"></a>
     `
     })
 
     let strHtml = strHtml1 + strHtml2.join('') + `</div>`
     elImgsCont.innerHTML = strHtml
+    renderKeyWords()
+
+}
+function filterImagetoDisplay(){
+    const elKeyWord = document.querySelector('#gsearch').value
+    if (elKeyWord === '') gCurrKeyWord = 'all'
+    else gCurrKeyWord = elKeyWord;
+    renderImgs();
+}
+function renderKeyWords(){
+    let keyWords  = getGkeyWords();
+    let keyWordsKeys = Object.keys(keyWords);
+    let keyWordsValues =  Object.values(keyWords);
+    var strHtml = '<ul>'
+    for(let i =0; i<5; i++){
+        strHtml +=`<li> <div class="keyword" onclick="updateAndRenderKeywordPopularity('${keyWordsKeys[i]}')" 
+        style= "font-size:(16/${keyWordsValues[i]})px" >
+        ${keyWordsKeys[i]}
+        </div></li> `
+    }
+    strHtml+= '</ul>'
+    var elKeywordsContainer = document.querySelector('.top-keywords')
+    elKeywordsContainer.innerHTML = strHtml
+}
+function updateAndRenderKeywordPopularity(clickedKeyWord){
+    const keyWords = getGkeyWords()
+        keyWords[clickedKeyWord]++;
+        renderKeyWords()
 }
 
 function renderMemeGenerator(imgId) {
     const currImgDetails = getImgById(imgId)
     const currImg = document.querySelector(`.template-${currImgDetails.id}`)
     setMeme(imgId)
-    console.log('hi')
     let elImgsCont = document.querySelector('.imgs-container');
     elImgsCont.innerHTML = '';
     elImgsCont.innerHTML = ` <div class="generator-page" >
@@ -105,8 +133,9 @@ function updateMemeTemplate(ev) {
     ev.preventDefault();
     ev.stopPropagation();
     let currMeme = getGmeme()
+    if(currMeme.selectedLineIdx === 2) return
+
     let canvas = document.querySelector('#meme-canvas');
-    // let ctx = canvas.getContext('2d');
     let elText = document.querySelector('#meme-text').value
 
     if (currMeme.lines[currMeme.selectedLineIdx] === undefined) {
@@ -117,64 +146,69 @@ function updateMemeTemplate(ev) {
     }
     else {
         currMeme.lines[currMeme.selectedLineIdx].text = elText
-        console.log('hi')
 
-        console.log(currMeme.lines[currMeme.selectedLineIdx].fontSize)
-        // currMeme.lines[currMeme.selectedLineIdx].fontSize = gFontSize
     }
     renderUpdatedMeme(true)
 }
 
-function renderUpdatedMeme(renderBothLines = false) {
-
+function setTextDetails(lineIdx){
     const currMeme = getGmeme();
     const canvas = document.querySelector('#meme-canvas');
     const ctx = canvas.getContext('2d');
-    console.log(currMeme.lines)
+    currMeme.selectedLineIdx = lineIdx
     let fontSize = canvas.width / currMeme.lines[currMeme.selectedLineIdx].fontSize;
-    const sizeHelper = canvas.width / 15;
     let textColor = currMeme.lines[currMeme.selectedLineIdx].color
     ctx.font = fontSize + 'px Impact';
     ctx.fillStyle = textColor ? textColor : 'white';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = fontSize / 15;
     let helper = ctx.lineWidth;
-    ctx.textBaseLine = 'top'
-    ctx.textAlign = 'center'
+    ctx.textBaseLine = 'top';
+    ctx.textAlign = 'center';
+}
+function printMemeText(lineidx){
+    const currMeme = getGmeme();
+    const canvas = document.querySelector('#meme-canvas');
+    const ctx = canvas.getContext('2d');
+    var sizeHelper = canvas.width / 15;
+    var lineHeight;
+    currMeme.selectedLineIdx = lineidx;
+    if(currMeme.selectedLineIdx === 1){
+        currMeme.lines[currMeme.selectedLineIdx].lineHeight = gLineHeights.bottomText;
+        lineHeight = currMeme.lines[currMeme.selectedLineIdx].lineHeight;
+        ctx.fillText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, canvas.height - lineHeight, canvas.width)
+        ctx.strokeText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, canvas.height - lineHeight, canvas.width)
+    
+    }
+    if(currMeme.selectedLineIdx === 0){
+    currMeme.lines[currMeme.selectedLineIdx].lineHeight = gLineHeights.upperText
+    lineHeight = currMeme.lines[currMeme.selectedLineIdx].lineHeight;
+    ctx.fillText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, sizeHelper + lineHeight, canvas.width)
+    ctx.strokeText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, sizeHelper + lineHeight, canvas.width)
+    }
+}
 
-    // const relevantTextPos = currMeme.lines.length - 1;
-
+function renderUpdatedMeme(renderBothLines = false) {
+    const currMeme = getGmeme();
+    const canvas = document.querySelector('#meme-canvas');
+    const ctx = canvas.getContext('2d');
+    // var sizeHelper = canvas.width / 15;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawImg(gCurrImage);
     if (currMeme.selectedLineIdx === 0) {
-        if (currMeme.lines[currMeme.selectedLineIdx].text) gLastText = currMeme.lines[currMeme.selectedLineIdx].text
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawImg(gCurrImage);
-        ctx.fillText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, sizeHelper + gLineHeights.upperText, canvas.width)
-        ctx.strokeText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, sizeHelper + gLineHeights.upperText, canvas.width)
+        setTextDetails(0);
+        printMemeText(0)
         return
     }
     if (currMeme.selectedLineIdx === 1) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawImg(gCurrImage);
-        currMeme.lines[0].text = gLastText;
         if (renderBothLines) {
-            let preTextColor = currMeme.lines[currMeme.selectedLineIdx - 1].color
-            ctx.fillStyle = preTextColor ? preTextColor : 'white';
-            fontSize = canvas.width / currMeme.lines[currMeme.selectedLineIdx - 1].fontSize;
-            ctx.font = fontSize + 'px Impact';
-            ctx.lineWidth = fontSize / 15;
-            ctx.fillText(currMeme.lines[0].text, canvas.width / 2, sizeHelper + gLineHeights.upperText, canvas.width)
-            ctx.strokeText(currMeme.lines[0].text, canvas.width / 2, sizeHelper + gLineHeights.upperText, canvas.width)
-        }
-        debugger
-        ctx.fillStyle = textColor ? textColor : 'white';
-        fontSize = canvas.width / currMeme.lines[currMeme.selectedLineIdx].fontSize;
-        ctx.font = fontSize + 'px Impact';
-        // if (currMeme.lines[relevantTextPos].text) gNextText = currMeme.lines[relevantTextPos].text
-        fontSize = currMeme.lines[currMeme.selectedLineIdx].fontSize
-        ctx.lineWidth = helper;
 
-        ctx.fillText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, canvas.height - gLineHeights.bottomText, canvas.width)
-        ctx.strokeText(currMeme.lines[currMeme.selectedLineIdx].text, canvas.width / 2, canvas.height - gLineHeights.bottomText, canvas.width)
+            setTextDetails(0);
+            printMemeText(0)
+        }
+
+        setTextDetails(1);
+        printMemeText(1)
         return
     }
 }
@@ -184,26 +218,21 @@ function changeFontSize(ev, value) {
     const ctx = canvas.getContext('2d');
     ev.stopPropagation();
     ev.preventDefault();
-    var currFontSize = gMeme.lines[currMeme.selectedLineIdx].fontSize
-
+    var currFontSize = gMeme.lines[currMeme.selectedLineIdx].fontSize;
     if (value) {
         if (currFontSize < 25) currMeme.lines[currMeme.selectedLineIdx].fontSize++;
     }
     else if (currFontSize > 10) currMeme.lines[currMeme.selectedLineIdx].fontSize--;
-    console.log(currMeme)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawImg(gCurrImage);
-    // updateMemeTemplate(event)
     renderUpdatedMeme(true)
 }
 
 function changeTextPosition(value) {
     const currMeme = getGmeme()
-    if (currMeme.selectedLineIdx === 0 || currMeme.selectedLineIdx >= 3) return
+    if (currMeme.selectedLineIdx >= 2) return
 
-    console.log(currMeme.selectedLineIdx)
-    currMeme.selectedLineIdx--
     const canvas = document.querySelector('#meme-canvas');
     let ctx = canvas.getContext('2d');
     if (currMeme.selectedLineIdx === 0) {
@@ -217,18 +246,16 @@ function changeTextPosition(value) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawImg(gCurrImage);
     renderUpdatedMeme(true)
-    currMeme.selectedLineIdx++;
-    console.log(currMeme.selectedLineIdx)
 }
 
 function goToNextLine(ev) {
     ev.preventDefault();
     const currMeme = getGmeme();
+    if(currMeme.selectedLineIdx === 2) return
     currMeme.selectedLineIdx++;
     document.querySelector('#meme-text').value = '';
 }
 function switchLines() {
-    debugger
     let currMeme = getGmeme()
     const canvas = document.querySelector('#meme-canvas');
     if (currMeme.selectedLineIdx > 1) return
@@ -275,7 +302,6 @@ function toggleScreen(){
 function openReadyMeme(meme) {
     document.body.classList.toggle('screen-toggle')
     const uploadMemeUrl = encodeURIComponent(meme)
-    console.log(uploadMemeUrl)
     const memeModalContent = `
     <img src="${meme}""${meme}" class="modal-img">
     <div class ="saved-meme-btns">
